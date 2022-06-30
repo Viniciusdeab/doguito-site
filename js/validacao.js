@@ -5,7 +5,7 @@ export function valida(input) {
         validadores[tipoDeInput](input)
     }
 
-    if (input.validity.valid){
+    if (input.validity.valid) {
         input.parentElement.classList.remove('input-container--invalido');
         input.parentElement.querySelector('.input-mensagem-erro').innerHTML = ''
     } else {
@@ -37,18 +37,24 @@ const mensagensDeErro = {
     dataNascimento: {
         valueMissing: 'O campo de data não pode esta vazio',
         customError: 'Você deve ser maior de 18 anos para se cadastrar.'
+    },
+
+    cpf: {
+        valueMissing: 'O campo de CPF não pode estar vazio.',
+        customError: 'O CPF digitado não é valido.'
     }
 }
 
 const validadores = {
-    dataNascimento: input => validaDataNascimanto(input)
+    dataNascimento: input => validaDataNascimanto(input),
+    cpf:input => validaCPF(input)
 }
 
-function mostraMensagemDeErro (tipoDeInput, input){
+function mostraMensagemDeErro(tipoDeInput, input) {
     let mensagem = '';
 
     tiposDeErro.forEach(erro => {
-        if(input.validity[erro]){
+        if (input.validity[erro]) {
             mensagem = mensagensDeErro[tipoDeInput][erro]
         }
     });
@@ -75,9 +81,13 @@ function maiorQue18(data) {
     return dataMais18 <= dataAtual;
 }
 
-function validaCPF(input){
+function validaCPF(input) {
     const cpfFormatado = input.value.replace(/\d/g, '');
     let mensagem = '';
+
+    if(!checaCPFRepetidos(cpfFormatado)){
+        mensagem = 'O CPF digitado não é valido.'
+    }
 
     input.setCustomValidity(mensagem);
 
@@ -96,4 +106,14 @@ function checaCPFRepetidos(cpf) {
         '88888888888',
         '99999999999'
     ]
+
+    let cpfValido = true;
+
+    valoresREpetidos.forEach(valor => {
+        if(valor == cpf){
+            cpfValido = false;
+        }
+    })
+
+    return cpfValido;
 }
